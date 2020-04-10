@@ -6,18 +6,18 @@ import BackDrop from '../BackDrop/BackDrop';
 class Modal extends Component {
 
     componentDidUpdate() {
-        console.log('[Modal] componentDidUpdate')
+        // console.log('[Modal] componentDidUpdate')
     }
 
 
     shouldComponentUpdate(nextProps, nextState) {
-        return nextProps.show !== this.props.show;
+        return nextProps.show !== this.props.show || nextProps.children !== this.props.children;
     }
 
     render() {
         return (
             <Aux>
-                <BackDrop show={this.props.show} clicked={this.props.notPurchased} />
+                <BackDrop show={this.props.show} clicked={this.props.closeModal} />
                 <div className={classes.Modal} 
                 style={{
                     transform: this.props.show? 'translateY(0)' : 'translateY(-100vh)',
