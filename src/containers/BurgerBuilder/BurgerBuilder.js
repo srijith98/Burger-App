@@ -75,28 +75,19 @@ class BurgerBuilder extends Component {
     }
 
     continuePurchaseHandler = () => {
-        this.setState({showSpinner: true})
-        const order = {
-            customer: {
-                name: 'Srijith',
-                phone: '9876543210',
-                address: 'Provident Welworthcity, Bangalore'
-            },
-            ingredients: this.state.ingredients,
-            price: this.state.totalPrice,
-            deliveryMethod: 'Superfast',
-            paymentMethod: 'Cash on delivery'
-        };
-        axios.post('orders.json', order)
-            .then(response => {
-                this.setState({showSpinner: false, purchaseMode: false})
-                console.log(response)
-            })
-            .catch(err => {
-                this.setState({showSpinner: false, purchaseMode: false})
-                console.log(err)
-            });
-        // alert('Order stored in backend.');
+        
+      
+        const query = [];
+        for(let i in this.state.ingredients) {
+            query.push(encodeURIComponent(i) + '=' + encodeURIComponent(this.state.ingredients[i]));
+        }
+        query.push('price=' + this.state.totalPrice);
+        const queryString = query.join('&');
+
+        this.props.history.push({
+            pathname: '/checkout',
+            search: '?' + queryString
+        });
     }
 
     render() {
@@ -109,7 +100,7 @@ class BurgerBuilder extends Component {
         let orderSummary = null;
         
 
-    let burger = (<div style={{paddingTop: "50px"}}>{this.state.error? <p style={{textAlign: "center"}}>Can't load burger!</p> :<Spinner />}</div>);
+    let burger = (<div style={{paddingTop: "50px"}}>{this.state.error? <p style={{textAlign: "center"}}>Couldn't load burger!</p> :<Spinner />}</div>);
         if(this.state.ingredients) {
             burger = (
                 <Aux>
