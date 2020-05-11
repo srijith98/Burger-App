@@ -100,10 +100,11 @@ class ContactDetails extends Component {
         const order = {
             ingredients: this.props.ingredients,
             price: this.props.totalPrice,
-            orderData: orderDataForm
+            orderData: orderDataForm,
+            userId: this.props.userId
         };
         // console.log(order);
-        this.props.placeOrder(order);
+        this.props.placeOrder(order, this.props.token);
     }
 
     checkValidity(inputValue, rules) {
@@ -179,13 +180,15 @@ const mapStateToProps = state => {
     return {
         ingredients: state.burgerBuilder.ingredients,
         totalPrice: state.burgerBuilder.totalPrice,
-        showSpinner: state.order.loading
+        showSpinner: state.order.loading,
+        token: state.auth.token,
+        userId: state.auth.userId
     }
 }
 
 const mapDispatchToProps = dispatch => {
     return {
-        placeOrder: (orderData) => dispatch(orderActions.purchaseBurger(orderData))
+        placeOrder: (orderData, token) => dispatch(orderActions.purchaseBurger(orderData, token))
     }
 }
 

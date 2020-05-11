@@ -23,13 +23,15 @@ class BurgerBuilder extends Component {
         this.props.setIngredientHandler();
     }
 
-    updatePurchasable = (totalPrice) => {
-        
-        this.setState({purchasable: totalPrice>20});
-    }
 
     purchaseHandler = () => {
-        this.setState({purchaseMode: true});
+        if(this.props.isAuthenticated) {
+            this.setState({purchaseMode: true});
+        }
+        else {
+            this.props.onAuthRedirectPath('/checkout');
+            this.props.history.push('/auth');
+        }
     }
 
     notPurchasedHandler = () => {
@@ -56,7 +58,7 @@ class BurgerBuilder extends Component {
             burger = (
                 <Aux>
                     <Burger ingredients={this.props.ingredients} />
-                    <BuildControls addIngredient={this.props.addIngredientHandler} removeIngredient={this.props.removeIngredientHandler} disabled={disabledInfo} price={this.props.totalPrice} purchasable={this.props.canOrder} order={this.purchaseHandler} />
+                    <BuildControls isAuth={this.props.isAuthenticated} addIngredient={this.props.addIngredientHandler} removeIngredient={this.props.removeIngredientHandler} disabled={disabledInfo} price={this.props.totalPrice} purchasable={this.props.canOrder} order={this.purchaseHandler} />
                 </Aux>
             );
             orderSummary = <OrderSummary ingredients={this.props.ingredients} totalPrice={this.props.totalPrice} cancelPurchase={this.notPurchasedHandler} continuePurchase={this.continuePurchaseHandler} />
@@ -83,7 +85,8 @@ const mapStateToProps = state => {
         ingredients: state.burgerBuilder.ingredients,
         totalPrice: state.burgerBuilder.totalPrice,
         canOrder: state.burgerBuilder.purchasable,
-        error: state.burgerBuilder.error
+        error: state.burgerBuilder.error,
+        isAuthenticated: state.auth.token !== null
     }
 };
 
@@ -92,7 +95,8 @@ const mapDispatchToProps = dispatch => {
         addIngredientHandler: (ingredient) => dispatch(actions.addIngredient(ingredient)),
         removeIngredientHandler: (ingredient) => dispatch(actions.removeIngredient(ingredient)),
         setIngredientHandler: () => dispatch(actions.initIngredients()),
-        onInitPurchase: () => dispatch(actions.purchaseInit())
+        onInitPurchase: () => dispatch(actions.purchaseInit()),
+        onAuthRedirectPath: (path) => dispatch(actions.authRedirectPath(path))
     }
 };
 
